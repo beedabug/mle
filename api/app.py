@@ -1,8 +1,10 @@
+import sys
+import traceback
 from urllib import request
 from flask import Flask, jsonify
-import pandas as pd 
 import joblib
-import sys
+import pandas as pd 
+
 from model import glm   
 
 app = Flask(__name__)
