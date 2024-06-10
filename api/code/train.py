@@ -5,7 +5,6 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score
 import statsmodels.api as sm
 import joblib
-import gzip
 
 
 # read training data
@@ -89,4 +88,4 @@ print(outcomes_train.head())
 # based on the bins listed, (0.71, 0.995] is to be used to classify an event when running test data
 
 # export model
-joblib.dump(logit, gzip.open('model/model_binary.dat.gz', 'wb'))
+joblib.dump(logit, 'model/glm.joblib')
