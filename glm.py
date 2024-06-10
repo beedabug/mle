@@ -1,8 +1,4 @@
-# python version 3.11.7 (main, Dec 15 2023, 12:09:04) [Clang 14.0.6 ]
-# numpy version 1.26.4
-# pandas version 2.1.4
-# sklearn version 0.23.1
-# statsmodels version 0.9.0
+# https://engineering.rappi.com/serve-your-first-model-with-scikit-learn-flask-docker-df95efbbd35e
 
 import numpy as np
 import pandas as pd
@@ -88,6 +84,9 @@ print('Bins:\n', outcomes_train.groupby('bin', observed=True).sum())
 
 # based on the bins listed, (0.71, 0.995] is to be used to classify an event when running test data
 
+
+
+# when modularizing test process, need to create imputer and scaler for prepping data
 # testing
 test = pd.read_csv('exercise_26_test.csv') 
 
