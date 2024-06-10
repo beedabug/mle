@@ -1,43 +1,50 @@
 import sys
 import traceback
-from urllib import request
-from flask import Flask, jsonify
+from flask import Flask, request, jsonify
 import joblib
-import pandas as pd 
-
-from model import glm   
+import pandas as pd  
 
 app = Flask(__name__)
 
+try:
+    glm = joblib.load('model/glm.joblib') # load model
+    print('Model loaded successfully')
+except Exception as e:
+    print('Error loading model:', e)
+    glm = None
 
 @app.route('/predict', methods=['POST']) 
 def predict():
     if glm:
         try:
-            json_ = request.json
-            query = pd.get_dummies(pd.DataFrame(json_))
-            query = query.reindex(columns=model_columns, fill_value=0)
+            json_data = request.get_json()
+            
+            if not json_data:
+                return jsonify({'error': 'No JSON data provided'}), 400
+            
+            n = 1 # set n = 1 for the case of a single prediction
+            
+            if isinstance(json_data, list): # determine if it is a batch request
+                n = len(json_data)
 
-            prediction = list(glm.predict(query))
+            df = pd.DataFrame(json_data, index=[list(range(n))]) 
+            prediction = pd.DataFrame(glm.predict(df.astype(float))).rename(columns={0:'phat'})
 
-            return jsonify({'prediction': prediction})
+            prediction['business_outcome'] = prediction.apply(lambda row : 1 if row.phat > 0.71 and row.phat <= 0.995 else 0, axis=1)
+            
+            model_output = pd.concat([prediction, df], axis=1).to_dict(orient='records')
 
-        except:
-
-            return jsonify({'trace': traceback.format_exc()})
+            return jsonify(model_output)
+        
+        except Exception as e:
+            return jsonify({'exception': str(e), 'trace': traceback.format_exc()}), 500
     else:
-        print ('Train the model first')
-        return ('No model here to use')
-
+        print ('Model did not load successfully')
 
 
 if __name__ == '__main__':
     try:
-        port = int(sys.argv[1]) # This is for a command-line argument
+        port = int(sys.argv[1]) # command line arg
     except:
         port = 1313 # if no port is provided, set to this
-    glm = joblib.load('model/glm.joblib') # load model
-    print ('Model loaded')
-    model_columns = joblib.load(model_columns_file_name) # Load "model_columns.pkl"
-    print ('Model columns loaded')
     app.run(port=port, debug=True)
