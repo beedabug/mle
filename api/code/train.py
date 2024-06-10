@@ -4,6 +4,12 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import roc_auc_score
 import statsmodels.api as sm
+import joblib
+import gzip
+
+
+# read training data
+train = pd.read_csv('data/exercise_26_train.csv') 
 
 # data prep for training data
 
@@ -78,6 +84,9 @@ print('The C-Statistic for train is ', roc_auc_score(outcomes_train['y'], outcom
 
 # calculate bins
 outcomes_train['bin'] = pd.qcut(outcomes_train['phat'], q=4)
-print('Bins:\n', outcomes_train.groupby('bin', observed=True).sum())
+print(outcomes_train.head())
 
 # based on the bins listed, (0.71, 0.995] is to be used to classify an event when running test data
+
+# export model
+joblib.dump(logit, gzip.open('model/model_binary.dat.gz', 'wb'))
