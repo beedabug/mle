@@ -43,8 +43,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    try:
-        port = int(sys.argv[1]) # command line arg
-    except:
-        port = 1313 # if no port is provided, set to this
-    app.run(port=port, debug=True)
+    app.run(host='0.0.0.0', port=1313)
