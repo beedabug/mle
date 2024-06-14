@@ -1,5 +1,3 @@
-# https://engineering.rappi.com/serve-your-first-model-with-scikit-learn-flask-docker-df95efbbd35e
-
 import numpy as np
 import pandas as pd
 from sklearn.impute import SimpleImputer
